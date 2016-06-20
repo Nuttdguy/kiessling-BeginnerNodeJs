@@ -16,17 +16,21 @@ function getProperty(re) {
 function start(route, handle) {
 	function onRequest(request, response) {
 		// console.log("Request received." + "== " + console.log(getProperty(request)) + count);
-
+		var postData = "";
 		var pathname = url.parse(request.url).pathname;
 		console.log("Request for " + pathname + " received. " );
 
-		route(handle, pathname, response);
-		// response.writeHead(200, {"Content-Type": "text/plain"});
-		// var content = route(handle, pathname);
-		// response.write(content);
-		// // response.write("Hello World! Does this change?");
-		// count++;
-		// response.end();
+		request.setEncoding("utf8");
+
+		request.addListener("data", function(postDataChunk) {
+			postData += postDataChunk;
+			console.log("Received POST data chunk '" + postDataChunk + "'.");
+		})
+
+		request.addListener("end", function() {
+			route(handle, pathname, response, postData)
+		})
+
 	}
 
 	http.createServer(onRequest).listen(8888);
@@ -34,3 +38,11 @@ function start(route, handle) {
 }
 
 exports.start = start;
+
+// response.writeHead(200, {"Content-Type": "text/plain"});
+// var content = route(handle, pathname);
+// response.write(content);
+// // response.write("Hello World! Does this change?");
+// count++;
+// response.end();
+// route(handle, pathname, response);

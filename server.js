@@ -13,20 +13,20 @@ function getProperty(re) {
 	return arr;
 }
 
-function start(route) {
+function start(route, handle) {
 	function onRequest(request, response) {
 		// console.log("Request received." + "== " + console.log(getProperty(request)) + count);
 
 		var pathname = url.parse(request.url).pathname;
 		console.log("Request for " + pathname + " received. " );
 
-		route(pathname);
-
-		response.writeHead(200, {"Content-Type": "text/plain"});
-		response.write("Hello World! Does this change?");
-		count++;
-		response.end();
-
+		route(handle, pathname, response);
+		// response.writeHead(200, {"Content-Type": "text/plain"});
+		// var content = route(handle, pathname);
+		// response.write(content);
+		// // response.write("Hello World! Does this change?");
+		// count++;
+		// response.end();
 	}
 
 	http.createServer(onRequest).listen(8888);
